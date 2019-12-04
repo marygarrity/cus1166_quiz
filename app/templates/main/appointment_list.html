@@ -1,0 +1,60 @@
+{% extends "menu.html" %}
+
+{% block main_content %}
+<div class="page-content page-container" id="page-content">
+    <div class="padding">
+        <div class="row container d-flex justify-content-center">
+            <div class="col-lg-12">
+                <div class="card px-3">
+                    <div class="card-body">
+                        <h4 class="card-title">CUS1166 - Appointment List</h4>
+                        <form method="POST" action="{{url_for('main.appointment_list')}}" >
+
+                        <div class="add-items d-flex">
+                                <!-- csrf_token is required to validate the form -->
+                                {{ form.csrf_token }}
+                                {{ form.title(class_='form-control appointment-list-input', placeholder='Add appointment')}}
+                                {{ form.status_completed }}
+                                <button class="add btn btn-primary font-weight-bold appointment-list-add-btn">Add</button>
+                       </div>
+                     </form>
+
+                       <!-- Show current appointments if available -->
+                        <div class="list-wrapper">
+                            <ul class="d-flex flex-column-reverse appointment-list">
+                             {% for appointment in appointment_list %}
+
+                                {% if 'done' == appointment.status%}
+                                    <li class="completed">
+                                {% else %}
+                                    <li>
+                                {% endif %}
+                                    <a href="{{url_for('main.edit_appointment',appointment_id=appointment.appointment_id)}}">
+                                         <i class="fas fa-edit"></i>
+                                    </a>
+
+                                    <div class="form-check">
+
+                                      <label class="form-check-label">
+                                          {% if 'done' == appointment.status %}
+                                            {{appointment.title}} - <span class="badge badge-success">{{appointment.status}}</span>
+                                          {% elif 'doing' == appointment.status %}
+                                            {{appointment.title}} - <span class="badge badge-warning">{{appointment.status}}</span>
+                                          {% elif 'todo' == appointment.status %}
+                                             {{appointment.title}} - <span class="badge badge-danger">{{appointment.status}}</span>
+                                          {% endif %}
+                                            <i class="input-helper"></i>
+                                      </label>
+                                    </div>
+                                    <a href="{{url_for('main.delete_appointment',appointment_id=appointment.appointment_id)}}" class="remove"><i class="fas fa-times"></i></a>
+                              </li>
+                             {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
