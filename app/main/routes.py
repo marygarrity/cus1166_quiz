@@ -75,30 +75,45 @@ def edit_task(task_id):
     return render_template("main/todolist_edit_view.html",form=form, task_id = task_id)
 
 
-@bp.route('/appointment_list', methods=['GET','POST'])
-def appointment_list():
-    form = AppointmentForm()
-    appointments = Appointment.query.all()#query through appointments
-    if form.validate_on_submit():
-        for x in appointments:
-            if x.date == form.date.data and x.start_time == form.start_time.data: #if already appointment at that time
-                return redirect(url_for(''))#?
+#APPOINTMENTS:
 
-        new_appointment = Appointment(title = form.title.data, status = form.status.data, date = form.date.data, start_time = form.start_time.data,
-                                      duration = form.duration.data, location = form.location.data,
-                                      customer_name = form.customer_name.data, notes = form.notes.data)
+
+@bp.route('/appointmentlist', methods=['GET','POST'])
+def appointmentlist():
+    form = AppointmentForm()
+
+    if form.validate_on_submit():
+
+        new_appointment = Appointment()
+        new_appointment.appointment_title = form.appointment_title.data
+        new_appointment.appointment_status = form.appointment_status_completed.data
+        new_appointment.appointment_date = form.appointment_date.data
+        new_appointment.start_time = form.start_time.data
+        new_appointment.duration = form.duration.data
+        new_appointment.location = form.location.data
+        new_appointment.customer_name = form.customer_name.data
+        new_appointment.notes = form.notes.data
 
         db.session.add(new_appointment)
         db.session.commit()
 
-        # Redirect to this handler - but without form submitted - gets a clear form.
-        return redirect(url_for('main.appointment_list'))
+        return redirect(url_for('main.appointmentlist'))
 
-    appointment_list = db.session.query(Appointment).all()#query through appointments#?
-    return render_template("main/appointment_list.html", appointment_list=appointment_list, form=form)
+    appointment_list = db.session.query(Appointment).all()
+
+    return render_template("main/appointmentlist.html", appointment_list=appointment_list, form=form)
 
 
-@bp.route('/appointment_list/edit/<int:appointment_id>', methods=['GET','POST'])
+@bp.route('/appointmentlist/remove/<int:appointment_id>', methods=['GET','POST'])
+def remove_appointment(appointment_id):
+
+    Appointment.query.filter(Appointment.appointment_id == appointment_id).delete()
+    db.session.commit()
+
+    return redirect(url_for('main.appointmentlist'))
+
+
+@bp.route('/appointmentlist/edit/<int:appointment_id>', methods=['GET','POST'])
 def edit_appointment(appointment_id):
     form = AppointmentForm()
     print(form.validate_on_submit())
@@ -106,9 +121,9 @@ def edit_appointment(appointment_id):
         # Get the data from the form, and add it to the database.
 
         current_appointment = Appointment.query.filter_by(appointment_id=appointment_id).first_or_404()
-        current_appointment.title = form.title.data
-        current_appointment.status = form.status_completed.data
-        current_appointment.date = form.date.data
+        current_appointment.title = form.appointment_title.data
+        current_appointment.appointment_status = form.appointment_status_completed.data
+        current_appointment.appointment_date = form.appointment_date.data
         current_appointment.start_time = form.start_time.data
         current_appointment.duration = form.duration.data
         current_appointment.location = form.location.data
@@ -117,25 +132,12 @@ def edit_appointment(appointment_id):
 
         db.session.add(current_appointment)
         db.session.commit()
-        # After editing, redirect to the view page.
-        return redirect(url_for('main.appointment_list'))
 
-    # get appointment for the database.
+        return redirect(url_for('main.appointmentlist'))
+
     current_appointment = Appointment.query.filter_by(appointment_id=appointment_id).first_or_404()
 
-    # update the form model in order to populate the html form.
-    form.title.data = current_appointment.title
-    form.status_completed.data = current_appointment.status
+    form.appointment_title.data = current_appointment.appointment_title
+    form.appointment_status_completed.data = current_appointment.appointment_status
 
-    return render_template("main/appointment_list_edit_view.html", form=form, appointment_id=appointment_id)
-
-
-@bp.route('/appointment_list/remove/<int:appointment_id>', methods=['GET','POST'])
-def delete_appointment(appointment_id):
-    # Query database, remove items
-    Appointment.query.filter(Appointment.appointment_id == appointment_id).delete()
-    db.session.commit()
-
-    return redirect(url_for('main.appointment_list'))
-
-#Change status???
+    return render_template("main/appointmentlist_edit_view.html", form=form, appointment_id=appointment_id)
