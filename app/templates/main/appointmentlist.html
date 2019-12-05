@@ -13,13 +13,28 @@
                         <div class="add-items d-flex">
                                 <!-- csrf_token is required to validate the form -->
                                 {{ form.csrf_token }}
-                                {{ form.appointment_title(class_='form-control todo-list-input', placeholder='What do you need to do today?')}}
+                                {{ form.appointment_title(class_='form-control todo-list-input', placeholder='Appointment title')}}
                                 {{ form.appointment_status_completed }}
+                       </div>
+                       <div class="add-items d-flex">
+                                <!-- csrf_token is required to validate the form -->
+                                {{ form.appointment_date(class_='form-control appointment-list-input', placeholder='Date (year-month-date)')}}
+                                {{ form.start_time(class_='form-control appointment-list-input', placeholder='Start time')}}
+                                {{ form.duration(class_='form-control appointment-list-input', placeholder='Duration')}}
+                       </div>
+                       <div class="add-items d-flex">
+                                <!-- csrf_token is required to validate the form -->
+                                {{ form.location(class_='form-control appointment-list-input', placeholder='Location (customer address)')}}
+                                {{ form.customer_name(class_='form-control appointment-list-input', placeholder='Customer name')}}
+                       </div>
+                       <div class="add-items d-flex">
+                                <!-- csrf_token is required to validate the form -->
+                                {{ form.notes(class_='form-control appointment-list-input', placeholder='Notes')}}
                                 <button class="add btn btn-primary font-weight-bold appointment-list-add-btn">Add</button>
                        </div>
                      </form>
 
-                       <!-- Show current appointments if avaiblae -->
+                       <!-- Show current appointments if available -->
                         <div class="list-wrapper">
                             <ul class="d-flex flex-column-reverse appointment-list">
                              {% for appointment in appointment_list %}
