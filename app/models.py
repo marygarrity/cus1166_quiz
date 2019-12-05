@@ -16,7 +16,7 @@ class Appointment(db.Model):
     appointment_status = db.Column(db.String(128))
     appointment_date = db.Column(db.Date, index=True)
     start_time = db.Column(db.Time, index=True)
-    duration = db.Column(db.Time, index=True)#?
+    duration = db.Column(db.Time, index=True)
     location = db.Column(db.String(128), index=True)#customer address
     customer_name = db.Column(db.String(128), index=True)
     notes = db.Column(db.String(128), index=True)
